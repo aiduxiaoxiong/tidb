@@ -398,8 +398,8 @@ func (s *SessionVars) SlowLogFormat(logItems *SlowQueryLogItems) string {
 	buf.WriteString(SlowLogRowPrefixStr + fmt.Sprintf("%v%v%v", SlowLogRewriteTimeStr,
 		SlowLogSpaceMarkStr, strconv.FormatFloat(logItems.RewriteInfo.DurationRewrite.Seconds(), 'f', -1, 64)))
 	if logItems.RewriteInfo.PreprocessSubQueries > 0 {
-		buf.WriteString(fmt.Sprintf(" %v%v%v %v%v%v", SlowLogPreprocSubQueriesStr, SlowLogSpaceMarkStr, logItems.RewriteInfo.PreprocessSubQueries,
-			SlowLogPreProcSubQueryTimeStr, SlowLogSpaceMarkStr, strconv.FormatFloat(logItems.RewriteInfo.DurationPreprocessSubQuery.Seconds(), 'f', -1, 64)))
+		fmt.Fprintf(&buf, " %v%v%v %v%v%v", SlowLogPreprocSubQueriesStr, SlowLogSpaceMarkStr, logItems.RewriteInfo.PreprocessSubQueries,
+			SlowLogPreProcSubQueryTimeStr, SlowLogSpaceMarkStr, strconv.FormatFloat(logItems.RewriteInfo.DurationPreprocessSubQuery.Seconds(), 'f', -1, 64))
 	}
 	buf.WriteString("\n")
 
@@ -557,7 +557,7 @@ func (s *SessionVars) SlowLogFormat(logItems *SlowQueryLogItems) string {
 	}
 
 	if s.CurrentDBChanged {
-		buf.WriteString(fmt.Sprintf("use %s;\n", strings.ToLower(s.CurrentDB)))
+		fmt.Fprintf(&buf, "use %s;\n", strings.ToLower(s.CurrentDB))
 		s.CurrentDBChanged = false
 	}
 
@@ -1128,7 +1128,7 @@ func encodeRules(rules *slowlogrule.SlowLogRules) string {
 			}
 			strB.WriteString(cond.Field)
 			strB.WriteByte(':')
-			strB.WriteString(fmt.Sprintf("%v", cond.Threshold))
+			fmt.Fprintf(&strB, "%v", cond.Threshold)
 		}
 
 		if i < len(rules.Rules)-1 {
